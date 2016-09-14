@@ -5,7 +5,9 @@ const { Router } = require('express')  //Alt of above doesn't meed "express.rout
 const router = Router()
 
 //MONGODB SETUP
-const { db } = require('../database')
+// const { db } = require('../database')        //unneeded with MVC SETUP
+const Contact = require('../models/contact')    //MVC SETUP
+const Order = require('../models/order')        //MVC SETUP
 
 // routes
 router.get ("/", (req, res) =>                                                 //this is the route for INDEX "/"
@@ -38,8 +40,8 @@ router.get ("/contact", (req, res) =>                                          /
 // })
 
 //MONGOOSE SETUP
-const mongoose = require("mongoose")
-const Contact = mongoose.model("Contact")
+// const mongoose = require("mongoose")
+// const Contact = mongoose.model("Contact")
 
 router.post ("/contact", (req, res) => {                                       // this is the POST route for CONTACT
   const msg = new Contact(req.body)
@@ -48,5 +50,21 @@ router.post ("/contact", (req, res) => {                                       /
     .then(() => res.redirect('/'))
     .catch(() => res.send('BAD'))
 })
+
+router.get('/order', (req, res) =>
+  res.render('order', { page: 'Order' })
+)
+
+router.post('/order', (req, res) => {
+  const makeOrder = new Order(req.body)
+  console.log(req.body)
+
+  makeOrder.save()
+    .then(() => res.redirect('/'))
+    .catch(() => res.send('BAD'))
+
+  res.redirect('/')
+})
+
 
 module.exports = router
