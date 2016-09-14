@@ -20,16 +20,31 @@ router.get ("/contact", (req, res) =>                                          /
   res.render("contact", { page: "Contact", message: "Get a Contact HI!"})   // render this page
 )
 
-router.post ("/contact", (req, res) => {                                       // this is the POST route for CONTACT
+
+
+// router.post ("/contact", (req, res) => {                                       // this is the POST route for CONTACT
 //   console.log(req.body)
 //     // res.render("contact", { page: "Contact", message: "HEY THERE!"})     // render this page
 //     // res.send("Thanks for stopping by")                                   // render this page
 //   res.redirect("/")
 // })
 
-//MONGODB SETUP
-  db().collection('contact')
-    .insertOne(req.body)
+// //MONGODB SETUP
+// router.post ("/contact", (req, res) => {                                       // this is the POST route for CONTACT
+//   db().collection('contact')
+//     .insertOne(req.body)
+//     .then(() => res.redirect('/'))
+//     .catch(() => res.send('BAD'))
+// })
+
+//MONGOOSE SETUP
+const mongoose = require("mongoose")
+const Contact = mongoose.model("Contact")
+
+router.post ("/contact", (req, res) => {                                       // this is the POST route for CONTACT
+  const msg = new Contact(req.body)
+  
+  msg.save()
     .then(() => res.redirect('/'))
     .catch(() => res.send('BAD'))
 })
