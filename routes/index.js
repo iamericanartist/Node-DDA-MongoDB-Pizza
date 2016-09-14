@@ -43,25 +43,22 @@ router.get ("/contact", (req, res) =>                                          /
 // const mongoose = require("mongoose")
 // const Contact = mongoose.model("Contact")
 
-router.post ("/contact", (req, res) => {                                       // this is the POST route for CONTACT
-  const msg = new Contact(req.body)
-  
-  msg.save()
+router.post ("/contact", (req, res, err) => {                                       // this is the POST route for CONTACT
+  Contact
+    .create(req.body)
     .then(() => res.redirect('/'))
-    .catch(() => res.send('BAD'))
+    .catch(err)
 })
 
 router.get('/order', (req, res) =>
   res.render('order', { page: 'Order' })
 )
 
-router.post('/order', (req, res) => {
-  const makeOrder = new Order(req.body)
-  console.log(req.body)
-
-  makeOrder.save()
+router.post('/order', (req, res, err) => {
+  Order
+    .create(req.body)
     .then(() => res.redirect('/'))
-    .catch(() => res.send('BAD'))
+    .catch(err)
 
   res.redirect('/')
 })
