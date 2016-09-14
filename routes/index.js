@@ -4,6 +4,9 @@
 const { Router } = require('express')  //Alt of above doesn't meed "express.router"
 const router = Router()
 
+//MONGODB SETUP
+const { db } = require('../database')
+
 // routes
 router.get ("/", (req, res) =>                                                 //this is the route for INDEX "/"
   res.render("index", { message: "This is my Main page!"})                  //render this page
@@ -18,10 +21,17 @@ router.get ("/contact", (req, res) =>                                          /
 )
 
 router.post ("/contact", (req, res) => {                                       // this is the POST route for CONTACT
-  console.log(req.body)
-    // res.render("contact", { page: "Contact", message: "HEY THERE!"})     // render this page
-    // res.send("Thanks for stopping by")                                   // render this page
-  res.redirect("/")
+//   console.log(req.body)
+//     // res.render("contact", { page: "Contact", message: "HEY THERE!"})     // render this page
+//     // res.send("Thanks for stopping by")                                   // render this page
+//   res.redirect("/")
+// })
+
+//MONGODB SETUP
+  db().collection('contact')
+    .insertOne(req.body)
+    .then(() => res.redirect('/'))
+    .catch(() => res.send('BAD'))
 })
 
 module.exports = router

@@ -23,6 +23,8 @@ const chalk = require("chalk")
 const { cyan, red } = require('chalk')
 const routes = require("./routes/") // same as ./routes/index.js
 
+const { connect } = require('./database') // set up MongoDB
+
 //get port from environment and store in Express
 const port = process.env.PORT || 3000
 app.set("port", port)
@@ -101,6 +103,15 @@ app.use((
 )
 
 ///////////  Listen to requests on provided port, log when available  ///////////
-app.listen(port, () => {
-  console.log(`Express server listening on port ${port}`)
-})
+// // PRIOR TO MONGODB
+// app.listen(port, () => {
+//   console.log(`Express server listening on port ${port}`)
+// })
+//MONGODB
+connect()
+  .then(() => {
+    app.listen(port, () =>
+      console.log(`Listening on port: ${port}`)
+    )
+  })
+  .catch(console.error)
