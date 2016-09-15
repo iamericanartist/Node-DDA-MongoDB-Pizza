@@ -1,0 +1,40 @@
+extends partials/layout.pug
+
+block content
+  h1 Order You Some ZA
+  .container  
+    h3= message
+    .row
+      .col-xs-offset-3.col-xs-6
+        form(method="POST")
+          .form-group
+            //- for="name" LINKS the label to the input but name="name" below links it to the query
+            label(for='name') Name
+            input.form-control#name(type='text' name='name' placeholder='John Doe')
+          .form-group
+            label(for='email') Email Address
+            input.form-control#email(type='email' name='email' placeholder='you@example.com')
+          .form-group
+            label(for='phone') Phone Number
+            input.form-control#phone(type='tel' name='phone' placeholder='234-567-8901')
+          .form-group
+            label(for='size') Size
+            select.form-control#size(name='size')
+              option Please choose your ZA size brah
+              each size in sizes
+                option(value=size.inches) #{size.name}: #{size.inches}"
+          .form-group
+            label Toppings
+            each topping in toppings
+              div
+              label(for='toppings')
+                input(type="checkbox" name="toppings" value=topping.name)
+                | #{topping.name}
+            //- checkboxes above, selectbox below
+            //- label(for='toppings') Toppings
+            //- select.form-control#toppings(name='toppings' multiple)
+            //-   each topping in toppings
+            //-    option(value=topping.name name='toppings') #{topping.name}
+          .order-form__submit
+            a.btn.btn-danger.btn-lg(href='/') Cancel
+            input.btn.btn-success.btn-lg(type='submit' value='Submit')
