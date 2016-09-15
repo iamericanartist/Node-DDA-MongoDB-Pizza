@@ -21,10 +21,20 @@ block content
             label(for='size') Size
             select.form-control#size(name='size')
               option Please choose your ZA size brah
-              option(value="10") Small 10"
-              option(value="12") Medium 12"
-              option(value="14") Large 14"
-              option(value="1776") Murica 1776"
+              each size in sizes
+                option(value=size.inches) #{size.name}: #{size.inches}"
+          .form-group
+            label Toppings
+            each topping in toppings
+              div
+              label(for='toppings')
+                input(type="checkbox" name="toppings" value=topping.name)
+                | #{topping.name}
+            //- checkboxes above, selectbox below
+            //- label(for='toppings') Toppings
+            //- select.form-control#toppings(name='toppings' multiple)
+            //-   each topping in toppings
+            //-    option(value=topping.name name='toppings') #{topping.name}
           .order-form__submit
             a.btn.btn-danger.btn-lg(href='/') Cancel
             input.btn.btn-success.btn-lg(type='submit' value='Submit')

@@ -8,6 +8,8 @@ const router = Router()
 // const { db } = require('../database')        //unneeded with MVC SETUP
 const Contact = require('../models/contact')    //MVC SETUP
 const Order = require('../models/order')        //MVC SETUP
+const Size = require('../models/size')          //MVC SETUP
+const Topping = require('../models/toppings')          //MVC SETUP
 
 // routes
 router.get ("/", (req, res) =>                                                 //this is the route for INDEX "/"
@@ -50,17 +52,48 @@ router.post ("/contact", (req, res, err) => {                                   
     .catch(err)
 })
 
-router.get('/order', (req, res) =>
-  res.render('order', { page: 'Order' })
+// router.get('/order', (req, res) => {
+//   const sizes = Size.get()
+//   res.render('order', { page: 'Order', sizes })
+// })
+// // [{ inches: 14, name: 'Large'},{ inches: 12, name: 'Medium' }]
+
+//pre-PROMISES
+// router.get('/order', (req, res) =>
+//   Size
+//   .find()
+//   .sort({inches: 1 })
+//   .then(sizes => res.render('order', { page: 'Order', sizes}))  //orig
+//   // .then(sizes => res.render('order', { page: 'Order', sizes, toppings: [{name: 'Pepperoni'},{ name: 'Sausage'}, {name: 'Olives'}] })) //hardcoded to test connetcion to pug
+// )
+// // [{ inches: 14, name: 'Large'},{ inches: 12, name: 'Medium' }]
+
+//PROMISE.ALL
+router.get('/order', (req, res, err) =>
+  Promise
+    .all([
+      Size.find().sort({ inches: 1 }),
+  // .then(sizes => res.render('order', { page: 'Order', sizes}))  //orig
+  // .then(sizes => res.render('order', { page: 'Order', sizes, toppings: [{name: 'Pepperoni'},{ name: 'Sausage'}, {name: 'Olives'}] })) //hardcoded to test connetcion to pug
+      Topping.find().sort({ name: 1})
+    ])
+    .then(([sizes, toppings]) =>
+      res.render('order', {page: 'Order', sizes, toppings})
+    )
+    .catch(err)
 )
+
+
+
+// [{ inches: 14, name: 'Large'},{ inches: 12, name: 'Medium' }]
+
+
 
 router.post('/order', (req, res, err) => {
   Order
     .create(req.body)
     .then(() => res.redirect('/'))
     .catch(err)
-
-  res.redirect('/')
 })
 
 
