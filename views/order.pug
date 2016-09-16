@@ -10,17 +10,17 @@ block content
           .form-group
             //- for="name" LINKS the label to the input but name="name" below links it to the query
             label(for='name') Name
-            input.form-control#name(type='text' name='name' placeholder='John Doe')
+            input.form-control#name(type='text' name='name' placeholder='John Doe' required)
           .form-group
             label(for='email') Email Address
-            input.form-control#email(type='email' name='email' placeholder='you@example.com')
+            input.form-control#email(type='email' name='email' placeholder='you@example.com' required)
           .form-group
             label(for='phone') Phone Number
-            input.form-control#phone(type='tel' name='phone' placeholder='234-567-8901')
+            input.form-control#phone(type='tel' name='phone' placeholder='234-567-8901' required)
           .form-group
             label(for='size') Size
             select.form-control#size(name='size')
-              option Please choose your ZA size brah
+              option(disabled selected) Please choose your ZA size brah
               each size in sizes
                 option(value=size.inches) #{size.name}: #{size.inches}"
           .form-group

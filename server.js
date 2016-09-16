@@ -23,7 +23,12 @@ const chalk = require("chalk")
 const { cyan, red } = require('chalk')
 const routes = require("./routes/") // same as ./routes/index.js
 
-const { connect } = require('./database') // set up MongoDB
+
+// const { connect } = require('./database') // set up MongoDB
+
+// USING mLAB DATABASE
+const { connect } = require('./db/database')
+
 
 //get port from environment and store in Express
 const port = process.env.PORT || 3000
