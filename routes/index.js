@@ -89,12 +89,34 @@ router.get('/order', (req, res, err) =>
 
 
 
-router.post('/order', (req, res, err) => {
+// router.post('/order', (req, res, err) => {
+//   Order
+//     .create(req.body)
+//     .then(() => res.redirect('/'))
+//     .catch(err)
+// })
+
+////validation added (Scott version 1)
+router.post('/order', (req, res, next) =>
   Order
     .create(req.body)
     .then(() => res.redirect('/'))
-    .catch(err)
-})
+    .catch(err) => {
+      console.log(err)(Object.keys(error.errors).map(key => error.errors[key]message))
+      return PROMISE
+        .all([
+          Size.find().sort({inches: 1}),
+          Topping.find().sort({name: 1}),
+          ])
+      })
+      .then(([
+        sizes,
+        toppings,
+        ]) =>
+      res.render("order", { page: "Order", sizes, toppings, msg: "Failed" })
+      )
+      .catch(next)
+)
 
 
 module.exports = router
