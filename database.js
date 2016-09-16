@@ -9,6 +9,7 @@ const MONGODB_URL = 'mongodb://eric:stanky@ds033046.mlab.com:33046/sliceoflyfe'
 mongoose.Promise = Promise
 
 module.exports.connect = () => mongoose.connect(MONGODB_URL)
+module.exports.disconnect = () => mongoose.disconnect()
 
 
 

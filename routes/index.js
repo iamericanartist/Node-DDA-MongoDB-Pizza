@@ -97,26 +97,28 @@ router.get('/order', (req, res, err) =>
 // })
 
 ////validation added (Scott version 1)
-router.post('/order', (req, res, next) =>
+router.post('/order', ({ body }, res, err) =>
   Order
-    .create(req.body)
+    .create(body)
     .then(() => res.redirect('/'))
-    .catch(err) => {
-      console.log(err)(Object.keys(error.errors).map(key => error.errors[key]message))
-      return PROMISE
-        .all([
-          Size.find().sort({inches: 1}),
-          Topping.find().sort({name: 1}),
-          ])
-      })
-      .then(([
+    .catch(({ errors })  =>
+      Promise.all([ // retrieve sizes and toppings again,
+        Promise.resolve(errors), // but pass the errors along as well
+        Size.find().sort({ inches: 1 }),
+        Topping.find().sort({ name: 1 }),
+      ])
+    )
+    .then(([
+        errors,
         sizes,
         toppings,
-        ]) =>
-      res.render("order", { page: "Order", sizes, toppings, msg: "Failed" })
-      )
-      .catch(next)
+      ]) =>
+      // UI/UX additions
+      // send errors to renderer to change styling and add error messages
+      // also, send the req.body to use as initial form input values
+      res.render('order', { page: 'Order', sizes, toppings, errors, body })
+    )
+    .catch(err)
 )
-
 
 module.exports = router
