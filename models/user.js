@@ -10,6 +10,7 @@ module.exports = mongoose.model("User", {
     lowercase: true,
     required: true,
     match: [HTML5_EMAIL_VALIDATION, "Please enter valid email address"],
+    index: { unique: true },
   },
   password: {
     type: String,
