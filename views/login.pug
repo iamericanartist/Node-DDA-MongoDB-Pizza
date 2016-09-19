@@ -1,0 +1,27 @@
+extends partials/layout.pug
+
+block content
+  h1 Welcome to Slice of Lyfe
+  if error
+    h2= error
+  .container
+    img(src="https://media.giphy.com/media/sTUWqCKtxd01W/giphy.gif")
+  .container  
+    h3= message
+    .row
+      .col-xs-offset-3.col-xs-6
+        form(method="POST")
+          //- .form-group
+          //-   //- for="name" LINKS the label to the input but name="name" below links it to the query
+          //-   label(for='name') Name
+          //-   input.form-control#name(type='text' name='name' placeholder='John Doe')
+          .form-group
+            label(for='email') Email Address
+            input.form-control#email(type='email' name='email' placeholder='you@example.com' required)
+          .form-group
+            label(for='password') Password
+            input.form-control#password(type='password' name='password' placeholder='Y0uR!p&5Sw*Rd-h3rE' required)
+          .contact-form__submit
+            a.btn.btn-danger.btn-lg(href='/') Cancel
+            input.btn.btn-success.btn-lg(type='submit' value='Submit')
+
