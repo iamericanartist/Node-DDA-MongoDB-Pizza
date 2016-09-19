@@ -9,19 +9,45 @@ const router = Router()
 const Contact = require('../models/contact')    //MVC SETUP
 const Order = require('../models/order')        //MVC SETUP
 const Size = require('../models/size')          //MVC SETUP
-const Topping = require('../models/toppings')          //MVC SETUP
+const Topping = require('../models/toppings')   //MVC SETUP
 
 // routes
-router.get ("/", (req, res) =>                                                 //this is the route for INDEX "/"
-  res.render("index", { message: "This is my Main page!"})                  //render this page
+router.get("/login", (req, res) =>                                 //this is the route for INDEX "/"
+  res.render("login", { message: "Please Login!"})                  //render this page
+)
+router.post('/login', (req, res) => {
+  if (req.body.password === 'password') {
+    res.redirect('/')
+  } else {
+    res.render('login', { error: 'Email & password combination do not match' })
+  }
+})
+
+
+router.get("/register", (req, res) =>                                      //this is the route for INDEX "/"
+  res.render("register", { message: "Register"})          //render this page
+)
+router.post("/register", (req, res) => {                                       // this is the POST route for CONTACT
+  if (req.body.password === req.body.confirmation) {
+    res.redirect('/')
+  } else {
+    res.render('register', {error: "Password & password confirmation don't match"})
+  }
+})
+
+
+router.get ("/", (req, res) =>                                      //this is the route for INDEX "/"
+  res.render("index", { message: "This is my Main page!"})          //render this page
 )
 
-router.get ("/about", (req, res) =>                                            //this is the route for ABOUT
-  res.render("about", { page: "About", message: "This is my About page."})  //render this page
+
+router.get ("/about", (req, res) =>                                           //this is the route for ABOUT
+  res.render("about", { page: "About", message: "This is my About page."})    //render this page
 )
 
-router.get ("/contact", (req, res) =>                                          // this is the route for CONTACT
-  res.render("contact", { page: "Contact", message: "Get a Contact HI!"})   // render this page
+
+router.get ("/contact", (req, res) =>                                         // this is the route for CONTACT
+  res.render("contact", { page: "Contact", message: "Get a Contact HI!"})     // render this page
 )
 
 
