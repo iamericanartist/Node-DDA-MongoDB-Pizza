@@ -23,6 +23,8 @@ const chalk = require("chalk")
 const { cyan, red } = require('chalk')
 const routes = require("./routes/") // same as ./routes/index.js
 
+const session = require('express-session')
+const RedisStore = require('connect-redis')(session)  //grabbing from line above and adding it here
 
 // const { connect } = require('./database') // set up MongoDB
 
@@ -40,6 +42,9 @@ app.set("view engine", "pug")
 
 ////////////////////////////////////  OTHER  ////////////////////////////////////
 app.locals.company = "Slyce of Lyfe"
+app.locals.errors = {}      // errors & body added to avoid guard statements
+app.locals.body = {}        // i.e. value=(body && body.name) vs. value=body.name
+
 
 if (process.env.NODE_ENV !== "production"){
 app.locals.pretty = true                    // "app.locals.pretty" makes the terminal output of "curl localhost:3000" look like html
@@ -62,6 +67,19 @@ app.use((req, res, next) => {
 app.use(express.static("public"))
 app.use(bodyParser.urlencoded({ extended: false }))
 
+
+app.use(session({
+  store: new RedisStore({
+    url: process.env.REDIS_URL || "redis://localhost:6379" //redis hooked up to HEROKU
+  }),
+  secret: "sliceoflyfesecretkey"
+}))
+
+
+app.use((req, res, next) => {
+  app.locals.email = req.session.email
+  next()
+})
 
 //////////////////////////////////  ROUTES  ////////////////////////////////////
 app.use(routes)

@@ -17,11 +17,17 @@ nav.navbar.navbar-inverse.navbar-fixed-top
           a(href="/contact") Contact
         li(class=`${page === "Order" ? "active" : ""}`)
           a(href="/order") Order
-        li(class=`${page === "Register" ? "active" : ""}`)
-          a(href="/register") Register
-        li(class=`${page === "Login" ? "active" : ""}`)
-          a(href="/login") Login
-
+        //- li(class=`${page === "Register" ? "active" : ""}`)
+        //-   a(href="/register") Register
+        //- li(class=`${page === "Login" ? "active" : ""}`)
+        //-   a(href="/login") Login
+        if email
+          li: a(href='/logout') Logged in as #{email}
+        else
+          li(class={ active: page === 'Login' })
+            a(href='/login') Login
+          li(class={ active: page === 'Register' })
+            a(href='/register') Register
 
 
 //- ///////////////////////////  ALTERNATIVE NAVBAR   ///////////////////////////

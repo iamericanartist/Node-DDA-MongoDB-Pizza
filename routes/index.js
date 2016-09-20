@@ -32,7 +32,7 @@ router.get("/login", (req, res) =>                                 //this is the
 // })
 
 ///////////////////////////////////  SCOTTS  ///////////////////////////////////
-router.post('/login', ({ body: { email, password } }, res, err) => {
+router.post('/login', ({session, body: { email, password } }, res, err) => {
   User.findOne({ email })
     .then(user => {
       if (user) {
@@ -51,6 +51,7 @@ router.post('/login', ({ body: { email, password } }, res, err) => {
     })
     .then((matches) => {
       if (matches) {
+        session.email = email   // was req.session.email but we destructured session above ("router.post" line)
         res.redirect('/')
       } else {
         res.render('login', { msg: 'Password does not match' })
@@ -140,6 +141,9 @@ router.get ("/contact", (req, res) =>                                         //
 
 
 
+
+
+
 // router.post ("/contact", (req, res) => {                                       // this is the POST route for CONTACT
 //   console.log(req.body)
 //     // res.render("contact", { page: "Contact", message: "HEY THERE!"})     // render this page
@@ -183,7 +187,44 @@ router.post ("/contact", (req, res, err) => {                                   
 // // [{ inches: 14, name: 'Large'},{ inches: 12, name: 'Medium' }]
 
 
-////////////////////////////////////  ORDER  ////////////////////////////////////
+
+///////////////////////////////////  LOGOUT  ///////////////////////////////////
+
+router.post('/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) throw err
+    res.redirect('/login')
+  })  
+})
+
+
+///////////////////////////  GUARD MIDDLEWARE  ///////////////////////////
+// login guard middleware
+router.use((req, res, next) => {
+  if (req.session.email) {
+    next()
+  } else {
+    res.redirect('/login')
+  }
+})
+
+
+///////////////////////////////  GUARDED LOGOUT  ///////////////////////////////
+//// pre guarded
+// router.get('/logout', (req, res) => {
+//   if (req.session.email) {
+//     res.render('logout', { page: 'Logout'})
+//   } else {
+//     res.redirect('/login')
+//   }
+// })
+
+router.get('/logout', (req, res) =>
+  res.render('logout', { page: 'Logout'})
+)
+  
+
+////////////////////////////////  GUARDED ORDER  ////////////////////////////////
 //PROMISE.ALL
 router.get('/order', (req, res, err) =>
   Promise
@@ -198,8 +239,6 @@ router.get('/order', (req, res, err) =>
     )
     .catch(err)
 )
-
-
 
 // [{ inches: 14, name: 'Large'},{ inches: 12, name: 'Medium' }]
 
@@ -236,5 +275,6 @@ router.post('/order', ({ body }, res, err) =>
     )
     .catch(err)
 )
+
 
 module.exports = router
