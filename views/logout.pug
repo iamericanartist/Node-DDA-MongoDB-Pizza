@@ -1,0 +1,26 @@
+extends partials/layout.pug
+
+block content
+  h1 Leaving Slice of Lyfe So soon?
+  .container
+    img(src="https://media.giphy.com/media/sTUWqCKtxd01W/giphy.gif")
+  .container  
+    h3= message
+    .row
+      .col-xs-offset-3.col-xs-6
+        form(method='POST')
+          .logout-form__submit
+            a.btn.btn-danger.btn-lg(href='/') Cancel
+            input.btn.btn-success.btn-lg(type='submit' value='Logout')
+
+
+        //- form(method="POST")
+        //-   .form-group
+        //-     label(for='email') Email Address
+        //-     input.form-control#email(type='email' name='email' placeholder='you@example.com' required)
+        //-   .form-group
+        //-     label(for='password') Password
+        //-     input.form-control#password(type='password' name='password' placeholder='Y0uR!p&5Sw*Rd-h3rE' required)
+        //-   .contact-form__submit
+        //-     a.btn.btn-danger.btn-lg(href='/') Cancel
+        //-     input.btn.btn-success.btn-lg(type='submit' value='Submit')
