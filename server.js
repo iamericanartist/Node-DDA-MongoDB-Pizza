@@ -20,17 +20,15 @@ const express = require("express")
 const app = express()
 const bodyParser = require("body-parser")
 const chalk = require("chalk")
-const { cyan, red } = require('chalk')
-const routes = require("./routes/") // same as ./routes/index.js
+const { cyan, red } = require("chalk")
+const routes = require("./routes/")                     // same as ./routes/index.js
 
-const session = require('express-session')
-const RedisStore = require('connect-redis')(session)  //grabbing from line above and adding it here
+// USING PASSPORT AUTH
+const passport = require("passport")
+const session = require("express-session")
+const RedisStore = require("connect-redis")(session)    //grabbing from line above and adding it here
 
-// const { connect } = require('./database') // set up MongoDB
-
-// USING mLAB DATABASE
-const { connect } = require('./db/database')
-
+const { connect } = require("./db/database")            // USING mLAB DATABASE
 
 //get port from environment and store in Express
 const port = process.env.PORT || 3000
@@ -45,24 +43,12 @@ app.locals.company = "Slyce of Lyfe"
 app.locals.errors = {}      // errors & body added to avoid guard statements
 app.locals.body = {}        // i.e. value=(body && body.name) vs. value=body.name
 
-
 if (process.env.NODE_ENV !== "production"){
 app.locals.pretty = true                    // "app.locals.pretty" makes the terminal output of "curl localhost:3000" look like html
 }
 
 
 /////////////////////////  MIDDLEWARES (Above Routes)  /////////////////////////
-app.use((req, res, next) => {
-  console.log(`[${Date()}]`, chalk.cyan(`${req.method} ${req.url}`), req.headers['user-agent'])
-  next()
-})
-
-// ALTERNATE
-// app.use(({ method, url, headers: { 'user-agent': agent } }, res, next) => {
-//   const timeStamp = new Date()
-//   console.log(`[${timeStamp}] "${cyan(`${method} ${url}`)}" "${agent}"`)
-//   next()
-// })
 
 app.use(express.static("public"))
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -72,14 +58,30 @@ app.use(session({
   store: new RedisStore({
     url: process.env.REDIS_URL || "redis://localhost:6379" //redis hooked up to HEROKU
   }),
-  secret: "sliceoflyfesecretkey"
+  resave: false,
+  saveUninitialized: false,
+  secret: process.env.SESSION_SECRET || "sliceoflyfesecretkey",
 }))
 
 
+require('./lib/passport-strategies')
+app.use(passport.initialize())
+app.use(passport.session())
+
 app.use((req, res, next) => {
-  app.locals.email = req.session.email
+  app.locals.email = req.user && req.user.email
   next()
 })
+
+app.use(({ method, url, headers: { 'user-agent': agent } }, res, next) => {
+  const timeStamp = new Date()
+  console.log(`[${timeStamp}] "${cyan(`${method} ${url}`)}" "${agent}"`)
+  next()
+})
+
+app.use(express.static('public'))
+app.use(bodyParser.urlencoded({ extended: false }))
+
 
 //////////////////////////////////  ROUTES  ////////////////////////////////////
 app.use(routes)
@@ -87,23 +89,9 @@ app.use(routes)
 
 ///////////////////////////////  CUSTOM 404 PAGE  ///////////////////////////////
 app.use((req, res) =>
-  res.render('404')
+  res.render("404")
 )
 
-
-////////////////  ERROR HANDLING MIDDLEWARES (AFTER ALL ROUTES)  ////////////////
-// app.use((err, req, res, next) => {
-//   console.log(`[${Date()}]`, chalk.red(`${req.method} ${req.url}`), req.headers['user-agent'])
-//   res.status(500).send('Internal Server Error - Unplug it and bring it back to Best Buy')
-// })
-
-// // 404: Not Found Catch and pass to error handling middleware
-// app.use((req, res, next) => {
-//   // console.error("404")
-//   const err = Error("Not Found qwerty")
-//   err.status = 404
-//   next(err)
-// })
 
 //ERROR HANDLING MIDDLEWARES ACTUAL
 app.use((
@@ -112,8 +100,11 @@ app.use((
     res,
     next
   ) => {
+  if (process.env.NODE_ENV === 'production') {
     res.sendStatus(err.status || 500)
-
+  } else {
+    res.set('Content-Type', 'text/plain').send(err.stack)
+  }
     const timeStamp = new Date()
     const statusCode = res.statusCode
     const statusMessage = res.statusMessage
@@ -125,11 +116,8 @@ app.use((
   }
 )
 
+
 ///////////  Listen to requests on provided port, log when available  ///////////
-// // PRIOR TO MONGODB
-// app.listen(port, () => {
-//   console.log(`Express server listening on port ${port}`)
-// })
 //MONGODB
 connect()
   .then(() => {
