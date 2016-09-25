@@ -2,10 +2,12 @@
 
 const { connect, disconnect } = require('./database')
 
-
 //JSON usage
 const sizes = require('./sizes')
 const toppings = require('./toppings')
+
+const Size = require('../models/size')
+const Topping = require('../models/topping')
 
 connect()
   .then(() => Size.remove({}))
